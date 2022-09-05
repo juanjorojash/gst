@@ -24,30 +24,29 @@ void setup() {
 
   LoRa.setTxPower(18,PA_OUTPUT_PA_BOOST_PIN); //18dbm, 63mW
 
-  delay(500);
+  delay(2000);
 }
 
 void loop() {
   // 16 byte
-  delay(500);
-  Serial.println("Send or reply (s/r):");
-  while(Serial.available() == 0) {
-  }
-  val = Serial.read();
-  while(Serial.available()) {
-    Serial.read();
-  }
-  
-
-  
-  switch (val){
+  if (Serial.available()){
+    val = Serial.read();
+    switch (val){
     case 0x73:
       send = true;
       break;
     case 0x72:
       send = false;
       break;
+    }
+  } 
+  
+  while(Serial.available()) {
+    Serial.read();
   }
+
+  
+
   
   
   if (send){
@@ -60,6 +59,7 @@ void loop() {
     LoRa.print(message);
     LoRa.endPacket();
     Serial.println("LoRa packet transmitted");
+    send = false;
   } else{
     int packetSize = LoRa.parsePacket();
       if (packetSize) {
