@@ -1,15 +1,14 @@
 #include <SPI.h>
 #include <LoRa.h>
 
-uint8_t packet[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0xFF};
-uint8_t i = 0;
 bool send = false;
 char val = {};
-#define message "Uoyan is the best!!"
+String message = String('NO');
 
 void setup() {
   // serial configuration
   Serial.begin(9600);
+  Serial.setTimeout(10000);
   //while(!Serial);  //not needed in real GST
 
   // LoRa configuration
@@ -30,10 +29,19 @@ void setup() {
 
 void loop() {
   // 16 byte
-  i++;
+  delay(500);
+  Serial.println("Send or reply (s/r):");
+  while(Serial.available() == 0) {
+  }
   val = Serial.read();
+  while(Serial.available()) {
+    Serial.read();
+  }
+  
+
+  
   switch (val){
-    case 0x74:
+    case 0x73:
       send = true;
       break;
     case 0x72:
@@ -41,7 +49,10 @@ void loop() {
       break;
   }
   
+  
   if (send){
+    Serial.println("Write the message:");
+    message = Serial.readStringUntil('\n');
     Serial.print("Sending... ");
     Serial.println(message);
     LoRa.beginPacket();
@@ -51,23 +62,18 @@ void loop() {
     Serial.println("LoRa packet transmitted");
   } else{
     int packetSize = LoRa.parsePacket();
-    if (packetSize) {
-    // received a packet
-    Serial.print("Received packet '");
-
-    // read packet
-    while (LoRa.available()) {
-      Serial.print((char)LoRa.read());
-    }
-
-    // print RSSI of packet
-    Serial.print("' with RSSI ");
-    Serial.println(LoRa.packetRssi());
-  }
-  }
-
-  delay(5000);
-
+      if (packetSize) {
+      // received a packet
+      Serial.print("Received packet '");
   
-
+      // read packet
+      while (LoRa.available()) {
+        Serial.print((char)LoRa.read());
+      }
+  
+      // print RSSI of packet
+      Serial.print("' with RSSI ");
+      Serial.println(LoRa.packetRssi());
+    }
+  }
 }
