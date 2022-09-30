@@ -44,10 +44,6 @@ void loop() {
   while(Serial.available()) {
     Serial.read();
   }
-
-  
-
-  
   
   if (send){
     Serial.println("Write the message:");
