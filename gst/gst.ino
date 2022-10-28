@@ -5,7 +5,7 @@ uint8_t packet[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
 uint8_t i = 0;
 bool send = false;
 char val = {};
-#define message "Uoyan is the best!!"
+#define message "Listen to Bad Bunny!!"
 
 void setup() {
   // serial configuration
@@ -33,10 +33,10 @@ void loop() {
   i++;
   val = Serial.read();
   switch (val){
-    case 0x74:
+    case 0x74: // t (transmit)
       send = true;
       break;
-    case 0x72:
+    case 0x72: // r (receive)
       send = false;
       break;
   }
